@@ -14,12 +14,18 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 
+/**
+ * UIThreadMonitor通过反射Choreographer的三个CallbackQueue，在每一帧处理完后再加入addFrameCallback(CALLBACK_INPUT, this, true);
+ * 来持续加入一对每一帧中三个过程（INPUT ANIMATION TRAVERSAL）做监控的Callback以获取每一个过程的耗时数据（queueCost）.
+ * UIThreadMonitor.addFrameCallback()即反射调用，对应类型的mCallbackQueues的 Choreographer.addCallbackLocked()，增加callback到MessageQueue.
+ */
 public class UIThreadMonitor implements BeatLifecycle, Runnable {
 
     private static final String TAG = "Matrix.UIThreadMonitor";
     private static final String ADD_CALLBACK = "addCallbackLocked";
     private volatile boolean isAlive = false;
     private long[] dispatchTimeMs = new long[4];
+    //lxy,添加了AnrTracer FrameTracer EvilMethodTracer三个Observer,在dispatchBegin批量调用
     private final HashSet<LooperObserver> observers = new HashSet<>();
     private volatile long token = 0L;
     private boolean isBelongFrame = false;
@@ -313,15 +319,19 @@ public class UIThreadMonitor implements BeatLifecycle, Runnable {
     public void run() {
         final long start = System.nanoTime();
         try {
+            MatrixLog.d(TAG, "in run(), before do doFrameBegin(token)");
             doFrameBegin(token);
             doQueueBegin(CALLBACK_INPUT);
+            MatrixLog.d(TAG, "in run(), after do doQueueBegin(CALLBACK_INPUT)");
 
             addFrameCallback(CALLBACK_ANIMATION, new Runnable() {
 
                 @Override
                 public void run() {
+                    MatrixLog.d(TAG, "in run(), before do doQueueEnd(CALLBACK_INPUT)");
                     doQueueEnd(CALLBACK_INPUT);
                     doQueueBegin(CALLBACK_ANIMATION);
+                    MatrixLog.d(TAG, "in run(), after do doQueueBegin(CALLBACK_ANIMATION)");
                 }
             }, true);
 
@@ -329,8 +339,10 @@ public class UIThreadMonitor implements BeatLifecycle, Runnable {
 
                 @Override
                 public void run() {
+                    MatrixLog.d(TAG, "in run(), before do doQueueEnd(CALLBACK_ANIMATION)");
                     doQueueEnd(CALLBACK_ANIMATION);
                     doQueueBegin(CALLBACK_TRAVERSAL);
+                    MatrixLog.d(TAG, "in run(), after do doQueueBegin(CALLBACK_TRAVERSAL)");
                 }
             }, true);
 

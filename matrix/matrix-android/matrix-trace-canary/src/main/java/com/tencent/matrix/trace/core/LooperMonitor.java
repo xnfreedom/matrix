@@ -177,6 +177,7 @@ public class LooperMonitor implements MessageQueue.IdleHandler {
 
         @Override
         public void println(String x) {
+            MatrixLog.w(TAG, "in LooperPrinter, println:[" + x + "]");
             if (null != origin) {
                 origin.println(x);
                 if (origin == this) {

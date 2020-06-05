@@ -16,6 +16,8 @@ import com.tencent.matrix.util.MatrixLog;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.ArrayList;
+
 
 public class AppMethodBeat implements BeatLifecycle {
 
@@ -37,10 +39,12 @@ public class AppMethodBeat implements BeatLifecycle {
     private final static Object statusLock = new Object();
     public static MethodEnterListener sMethodEnterListener;
     private static long[] sBuffer = new long[Constants.BUFFER_SIZE];
+    private static ArrayList<String> sBuffer_add = new ArrayList<>();
     private static int sIndex = 0;
     private static int sLastIndex = -1;
     private static boolean assertIn = false;
     private volatile static long sCurrentDiffTime = SystemClock.uptimeMillis();
+    //启始时间毫秒
     private volatile static long sDiffTime = sCurrentDiffTime;
     private static long sMainThreadId = Looper.getMainLooper().getThread().getId();
     private static HandlerThread sTimerUpdateThread = MatrixHandlerThread.getNewHandlerThread("matrix_time_update_thread");
@@ -52,6 +56,8 @@ public class AppMethodBeat implements BeatLifecycle {
     private static final Object updateTimeLock = new Object();
     private static boolean isPauseUpdateTime = false;
     private static Runnable checkStartExpiredRunnable = null;
+    private static boolean init_i = false;
+    private static boolean init_o = false;
     private static LooperMonitor.LooperDispatchListener looperMonitorListener = new LooperMonitor.LooperDispatchListener() {
         @Override
         public boolean isValid() {
@@ -59,15 +65,15 @@ public class AppMethodBeat implements BeatLifecycle {
         }
 
         @Override
-        public void dispatchStart() {
-            super.dispatchStart();
-            AppMethodBeat.dispatchBegin();
-        }
-
-        @Override
         public void dispatchEnd() {
             super.dispatchEnd();
             AppMethodBeat.dispatchEnd();
+        }
+
+        @Override
+        public void dispatchStart() {
+            super.dispatchStart();
+            AppMethodBeat.dispatchBegin();
         }
     };
 
@@ -199,6 +205,11 @@ public class AppMethodBeat implements BeatLifecycle {
      * @param methodId
      */
     public static void i(int methodId) {
+        if (!init_i){
+            init_i = true;
+            return;
+        }
+
 
         if (status <= STATUS_STOPPED) {
             return;
@@ -244,6 +255,11 @@ public class AppMethodBeat implements BeatLifecycle {
      * @param methodId
      */
     public static void o(int methodId) {
+        if (!init_o){
+            init_o = true;
+            return;
+        }
+
         if (status <= STATUS_STOPPED) {
             return;
         }
@@ -303,6 +319,10 @@ public class AppMethodBeat implements BeatLifecycle {
         long trueId = 0L;
         if (isIn) {
             trueId |= 1L << 63;
+            sBuffer_add.add("" + methodId + ", in") ;
+        }
+        else{
+            sBuffer_add.add("" + methodId + ", out");
         }
         trueId |= (long) methodId << 43;
         trueId |= sCurrentDiffTime & 0x7FFFFFFFFFFL;
@@ -324,6 +344,12 @@ public class AppMethodBeat implements BeatLifecycle {
     }
 
     private static IndexRecord sIndexRecordHead = null;
+
+    /**
+     * 生成新的indexRecord, 并按index插入到sIndexRecordHead指向的链表中，index相同时，插入相同index的indexRecord的前面
+     *  返回所新生成的indexRecord, 保存于tracer中，作为出现问题时检查sBuffer数据的锚点。
+     */
+
 
     public IndexRecord maskIndex(String source) {
         if (sIndexRecordHead == null) {

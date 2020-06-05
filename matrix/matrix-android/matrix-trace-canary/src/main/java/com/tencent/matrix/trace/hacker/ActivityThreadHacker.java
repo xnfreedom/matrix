@@ -40,6 +40,10 @@ public class ActivityThreadHacker {
     public static AppMethodBeat.IndexRecord sApplicationCreateBeginMethodIndex = new AppMethodBeat.IndexRecord();
     public static int sApplicationCreateScene = -100;
 
+    /**
+     * lxy, hook Handler的全局mCallback为HackCallback
+     * 用于判定是否为lunchActivity createService 等过程
+     */
     public static void hackSysHandlerCallback() {
         try {
             sApplicationCreateBeginTime = SystemClock.uptimeMillis();
