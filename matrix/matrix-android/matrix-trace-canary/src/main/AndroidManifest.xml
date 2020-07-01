@@ -1,7 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.tencent.matrix.trace">
-        <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-        <application>
-        </application>
+    package="com.tencent.matrix.trace">
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <application>
+        <provider
+            android:name="com.tencent.matrix.trace.core.TraceInstaller"
+            android:authorities="matrix-trace-canary-installer"
+            android:exported="false" />
+
+    </application>
 
 </manifest>
