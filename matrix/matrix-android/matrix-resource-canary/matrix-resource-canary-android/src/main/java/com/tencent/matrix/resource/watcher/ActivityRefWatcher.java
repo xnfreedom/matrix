@@ -243,7 +243,6 @@ public class ActivityRefWatcher extends FilePublisher implements Watcher, IAppFo
                 MatrixLog.w(TAG, "debugger is connected, to avoid fake result, detection was delayed.");
                 return Status.RETRY;
             }
-
             final WeakReference<Object> sentinelRef = new WeakReference<>(new Object());
             triggerGc();
             if (sentinelRef.get() != null) {
@@ -275,8 +274,8 @@ public class ActivityRefWatcher extends FilePublisher implements Watcher, IAppFo
                     // Although the sentinel tell us the activity should have been recycled,
                     // system may still ignore it, so try again until we reach max retry times.
                     MatrixLog.i(TAG, "activity with key [%s] should be recycled but actually still \n"
-                            + "exists in %s times, wait for next detection to confirm.",
-                        destroyedActivityInfo.mKey, destroyedActivityInfo.mDetectedCount);
+                            + "exists in %d times, wait for next detection to confirm. mMaxRedetectTimes:%d",
+                        destroyedActivityInfo.mKey, destroyedActivityInfo.mDetectedCount, mMaxRedetectTimes);
                     continue;
                 }
 

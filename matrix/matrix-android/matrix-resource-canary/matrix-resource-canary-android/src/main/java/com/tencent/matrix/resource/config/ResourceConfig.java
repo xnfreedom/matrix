@@ -80,7 +80,7 @@ public final class ResourceConfig {
         private DumpMode mDefaultDumpHprofMode = DEFAULT_DUMP_HPROF_MODE;
         private IDynamicConfig dynamicConfig;
         private Intent mContentIntent;
-        private boolean mDetectDebugger = false;
+        private boolean mDetectDebugger = true;
 
         public Builder dynamicConfig(IDynamicConfig dynamicConfig) {
             this.dynamicConfig = dynamicConfig;

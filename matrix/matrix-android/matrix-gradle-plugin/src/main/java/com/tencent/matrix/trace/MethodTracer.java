@@ -356,6 +356,21 @@ public class MethodTracer {
     }
 
     private boolean isActivityOrSubClass(String className, ConcurrentHashMap<String, String> mCollectedClassExtendMap) {
+        /*try {
+            Class activity = Class.forName("android.app.Activity");
+            Class clazz = Class.forName(className);
+
+            if (clazz.isAssignableFrom(activity)) {
+                return true;
+            }
+        }
+        catch (ClassNotFoundException e){
+            Log.e(TAG, className + "class not found!");
+            //Log.e(TAG, e.toString());
+            e.printStackTrace();
+        }
+        return false;*/
+
         className = className.replace(".", "/");
         boolean isActivity = className.equals(TraceBuildConstants.MATRIX_TRACE_ACTIVITY_CLASS)
                 || className.equals(TraceBuildConstants.MATRIX_TRACE_V4_ACTIVITY_CLASS)

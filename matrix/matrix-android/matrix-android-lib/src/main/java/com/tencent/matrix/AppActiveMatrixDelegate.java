@@ -64,6 +64,7 @@ public enum AppActiveMatrixDelegate {
         return visibleScene;
     }
 
+    //lxy, app从后台切换到前台时post runnable
     private void onDispatchForeground(String visibleScene) {
         if (isAppForeground || !isInit) {
             return;
@@ -84,6 +85,7 @@ public enum AppActiveMatrixDelegate {
 
     }
 
+    //lxy, app从前台切换到后台时post runnable
     private void onDispatchBackground(String visibleScene) {
         if (!isAppForeground || !isInit) {
             return;
@@ -125,6 +127,7 @@ public enum AppActiveMatrixDelegate {
 
     private final class Controller implements Application.ActivityLifecycleCallbacks, ComponentCallbacks2 {
 
+
         @Override
         public void onActivityStarted(Activity activity) {
             updateScene(activity);
@@ -132,6 +135,8 @@ public enum AppActiveMatrixDelegate {
         }
 
 
+        //lxy, getTopActivityName()为空表示app进入后台
+        //https://www.jianshu.com/p/47dfdd8c2597
         @Override
         public void onActivityStopped(Activity activity) {
             if (getTopActivityName() == null) {
@@ -194,6 +199,7 @@ public enum AppActiveMatrixDelegate {
         visibleScene = ss.toString();
     }
 
+    //lxy, 通过反射ActivityThread获取当前App第一个非paused的打开的activity
     public static String getTopActivityName() {
         long start = System.currentTimeMillis();
         try {

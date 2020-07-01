@@ -20,6 +20,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import android.os.Debug;
 import com.tencent.matrix.Matrix;
 import com.tencent.matrix.iocanary.IOCanaryPlugin;
 import com.tencent.matrix.iocanary.config.IOConfig;
@@ -61,6 +62,7 @@ public class MatrixApplication extends Application {
 
     @Override
     public void onCreate() {
+        Debug.waitForDebugger();
         super.onCreate();
         DynamicConfigImplDemo dynamicConfig = new DynamicConfigImplDemo();
         boolean matrixEnable = dynamicConfig.isMatrixEnable();

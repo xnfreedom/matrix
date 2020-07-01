@@ -287,11 +287,15 @@ public class MethodCollector {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc,
                                          String signature, String[] exceptions) {
+            //Log.i(TAG, "MethodCollector visitMethod:" + className + "." + name + desc);
             if (isABSClass) {
                 return super.visitMethod(access, name, desc, signature, exceptions);
             } else {
                 if (!hasWindowFocusMethod) {
                     hasWindowFocusMethod = isWindowFocusChangeMethod(name, desc);
+                    if (hasWindowFocusMethod){
+                        Log.i(TAG, "hasWindowFocusMethod SET TO TRUE");
+                    }
                 }
                 return new CollectMethodNode(className, access, name, desc, signature, exceptions);
             }
@@ -450,8 +454,14 @@ public class MethodCollector {
         }
     }
 
+    /**
+     * 过滤掉非src下的源代码生成的.class
+     * @param fileName
+     * @return
+     */
     public static boolean isNeedTraceFile(String fileName) {
         if (fileName.endsWith(".class")) {
+            //Log.i(TAG, "checking class isNeedTraceFile:" + fileName);
             for (String unTraceCls : TraceBuildConstants.UN_TRACE_CLASS) {
                 if (fileName.contains(unTraceCls)) {
                     return false;

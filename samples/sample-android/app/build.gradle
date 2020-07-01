@@ -10,7 +10,7 @@ configurations.all {
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    buildToolsVersion "28.0.3"
 
     signingConfigs {
         debug {
@@ -25,10 +25,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        /*
         ndk {
             abiFilters 'armeabi', 'armeabi-v7a', 'x86'
         }
+        */
     }
 
     buildTypes {
@@ -41,6 +42,7 @@ android {
             debuggable true
             minifyEnabled false
             signingConfig signingConfigs.debug
+            applicationIdSuffix ".debug"
         }
     }
 

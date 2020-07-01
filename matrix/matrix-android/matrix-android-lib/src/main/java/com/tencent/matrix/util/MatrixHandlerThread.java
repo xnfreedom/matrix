@@ -49,6 +49,9 @@ public class MatrixHandlerThread {
     private static volatile Handler defaultMainHandler = new Handler(Looper.getMainLooper());
     private static HashSet<HandlerThread> handlerThreads = new HashSet<>();
     public static boolean isDebug = false;
+    static {
+        MatrixLog.w(TAG, "initing MatrixHandlerThread");
+    }
 
     public static Handler getDefaultMainHandler() {
         return defaultMainHandler;
@@ -76,6 +79,7 @@ public class MatrixHandlerThread {
     }
 
     public static HandlerThread getNewHandlerThread(String name) {
+        MatrixLog.w(TAG, "lxy in getNewHandlerThread");
         for (Iterator<HandlerThread> i = handlerThreads.iterator(); i.hasNext();) {
             HandlerThread element = i.next();
             if (!element.isAlive()) {
@@ -86,7 +90,8 @@ public class MatrixHandlerThread {
         HandlerThread handlerThread = new HandlerThread(name);
         handlerThread.start();
         handlerThreads.add(handlerThread);
-        MatrixLog.w(TAG, "warning: create new handler thread with name %s, alive thread size:%d", name, handlerThreads.size());
+        MatrixLog.w(TAG, "lxy before warning getNewHandlerThread");
+        MatrixLog.w(TAG, "warning: 1 lxy create new handler thread with name %s, alive thread size:%d", name, handlerThreads.size());
         return handlerThread;
     }
 
@@ -102,6 +107,7 @@ public class MatrixHandlerThread {
 
         @Override
         public void println(String x) {
+
             if (isForeground) {
                 return;
             }

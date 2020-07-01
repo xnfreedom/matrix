@@ -66,7 +66,7 @@ public class MatrixTraceTransform extends Transform {
     private Transform origTransform;
     private ExecutorService executor = Executors.newFixedThreadPool(16);
 
-    public static void inject(Project project, MatrixTraceExtension extension, VariantScope variantScope) {
+        public static void inject(Project project, MatrixTraceExtension extension, VariantScope variantScope) {
 
         GlobalScope globalScope = variantScope.getGlobalScope();
         BaseVariantData variant = variantScope.getVariantData();
