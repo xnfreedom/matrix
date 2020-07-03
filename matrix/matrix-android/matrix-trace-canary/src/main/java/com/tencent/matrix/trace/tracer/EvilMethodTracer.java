@@ -11,11 +11,13 @@ import com.tencent.matrix.trace.constants.Constants;
 import com.tencent.matrix.trace.core.AppMethodBeat;
 import com.tencent.matrix.trace.core.UIThreadMonitor;
 import com.tencent.matrix.trace.items.MethodItem;
+import com.tencent.matrix.trace.util.TimeUtil;
 import com.tencent.matrix.trace.util.TraceDataUtils;
 import com.tencent.matrix.trace.util.Utils;
 import com.tencent.matrix.util.DeviceUtil;
 import com.tencent.matrix.util.MatrixHandlerThread;
 import com.tencent.matrix.util.MatrixLog;
+import com.tencent.matrix.trace.util.FileUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -213,6 +215,8 @@ public class EvilMethodTracer extends Tracer {
             }
 
             print.append("=========================================================================");
+            String msg = TimeUtil.getCurrentTimeInDefaultString() + "\r\n" + print.toString() + "\r\n";
+            FileUtils.writeJankLog(TracePlugin.getProcessName(), msg, true);
             return print.toString();
         }
     }

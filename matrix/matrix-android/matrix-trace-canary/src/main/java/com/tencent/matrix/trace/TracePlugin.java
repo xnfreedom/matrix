@@ -32,6 +32,7 @@ import com.tencent.matrix.trace.tracer.FrameTracer;
 import com.tencent.matrix.trace.tracer.StartupTracer;
 import com.tencent.matrix.util.MatrixHandlerThread;
 import com.tencent.matrix.util.MatrixLog;
+import com.tencent.matrix.util.MatrixUtil;
 
 /**
  * Created by caichongyang on 2017/5/20.
@@ -48,10 +49,13 @@ public class TracePlugin extends Plugin {
     public TracePlugin(TraceConfig config) {
         this.traceConfig = config;
     }
+    public static Application application;
+    private static String processName = null;
 
     @Override
     public void init(Application app, PluginListener listener) {
         super.init(app, listener);
+        application = app;
         MatrixLog.i(TAG, "trace plugin init, trace config: %s", traceConfig.toString());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             MatrixLog.e(TAG, "[FrameBeat] API is low Build.VERSION_CODES.JELLY_BEAN(16), TracePlugin is not supported");
@@ -66,6 +70,13 @@ public class TracePlugin extends Plugin {
         evilMethodTracer = new EvilMethodTracer(traceConfig);
 
         startupTracer = new StartupTracer(traceConfig);
+    }
+
+    public static String getProcessName(){
+        if (processName == null){
+            processName = MatrixUtil.getProcessName(application);
+        }
+        return processName;
     }
 
     @Override
